@@ -42,6 +42,8 @@ echo.
 echo Start Pull Request for Release to master
 git request-pull release-%release_branch% origin master
 
+echo Now Please Go To GitHub and Do a Pull Request on release-%release_branch%
+
 endlocal
 
 :exit
