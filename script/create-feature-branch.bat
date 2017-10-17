@@ -8,13 +8,14 @@ echo.
 :: crate new feature branch locally
 echo Create new Feature branch locally
 SET /P feature_branch_name="Please enter the name of the feature branch: feature-"
+SET /P feature_version="Please enter the version of the feature:"
 git checkout -b feature-%feature_branch_name% develop
 
 echo.
 echo.
 :: increase version on feature branch
 echo Increasing version of feature branch
-call "%M2_HOME%/bin/mvn" release:update-versions
+call "%M2_HOME%/bin/mvn" release:update-versions -DdevelopmentVersion=%feature_version% -DautoVersionSubmodules=true
 
 echo.
 echo.
