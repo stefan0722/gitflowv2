@@ -8,5 +8,7 @@ git status -s
 
 git commit -a
 
-git publish origin feature-??
+git push origin feature-??
+
+
 
