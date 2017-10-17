@@ -41,6 +41,15 @@ SET /P handwork="Do you need to do some manual merges [y/n]?"
 IF "%handwork%" == "y" GOTO exit
 echo.
 echo.
+echo.
+echo "Switch to feature workspace"
+git checkout -b feature-%feature_branch% origin/feature-%feature_branch%
+echo.
+echo.
+echo "Merge from develop branch to feature branch"
+git merge develop
+echo.
+echo.
 echo Start Pull Request for Feature to master
 git request-pull feature-%feature_branch% origin develop
 
