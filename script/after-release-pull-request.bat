@@ -16,7 +16,7 @@ git pull origin master
 echo.
 echo.
 echo Merge release branch to master
-git merge --no-off release-%release_branch%
+git merge --no-ff release-%release_branch%
 echo.
 echo.
 echo Create a tag of this version on master branch
