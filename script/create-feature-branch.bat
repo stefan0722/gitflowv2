@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-call before-branch.bat
+call script\before-branch.bat
 
 echo.
 echo.
