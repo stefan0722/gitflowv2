@@ -4,7 +4,7 @@
 
   <groupId>at.srfg.test</groupId>
   <artifactId>gitflowv2</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.2</version>
   <packaging>jar</packaging>
 
   <name>gitflowv2</name>
@@ -14,6 +14,28 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <build>
+    <!--<plugins>
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m5.1</version>
+        <configuration>
+          <flowInitContext>
+            <masterBranchName>master</masterBranchName>
+            <developBranchName>develop</developBranchName>
+            <featureBranchPrefix>feature-</featureBranchPrefix>
+            <releaseBranchPrefix>release-</releaseBranchPrefix>
+            <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+            <versionTagPrefix>blither-</versionTagPrefix>
+          </flowInitContext>
+          <noDeploy>true</noDeploy>
+        </configuration>
+      </plugin>
+    </plugins>-->
+  </build>
+
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -22,4 +44,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:git:https://github.com/stefan0722/gitflowv2.git</connection>
+    <url>scm:git:https://github.com/stefan0722/gitflowv2.git</url>
+    <developerConnection>scm:git:https://github.com/stefan0722/gitflowv2.git</developerConnection>
+  </scm>
 </project>
