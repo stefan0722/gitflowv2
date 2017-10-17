@@ -15,24 +15,11 @@
   </properties>
 
   <build>
-    <!--<plugins>
+    <plugins>
       <plugin>
-        <groupId>external.atlassian.jgitflow</groupId>
-        <artifactId>jgitflow-maven-plugin</artifactId>
-        <version>1.0-m5.1</version>
-        <configuration>
-          <flowInitContext>
-            <masterBranchName>master</masterBranchName>
-            <developBranchName>develop</developBranchName>
-            <featureBranchPrefix>feature-</featureBranchPrefix>
-            <releaseBranchPrefix>release-</releaseBranchPrefix>
-            <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-            <versionTagPrefix>blither-</versionTagPrefix>
-          </flowInitContext>
-          <noDeploy>true</noDeploy>
-        </configuration>
+          <artifactId>maven-release-plugin</artifactId>
       </plugin>
-    </plugins>-->
+    </plugins>
   </build>
 
 
