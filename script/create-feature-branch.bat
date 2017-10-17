@@ -15,7 +15,7 @@ echo.
 echo.
 :: increase version on feature branch
 echo Increasing version of feature branch
-call "%M2_HOME%/bin/mvn" release:update-versions -DdevelopmentVersion=%feature_version% -DautoVersionSubmodules=true
+call "%M2_HOME%/bin/mvn" versions:set -DnewVersion=%feature_version%-SNAPSHOT -DprocessAllModules=true
 
 echo.
 echo.
