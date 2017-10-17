@@ -42,7 +42,7 @@ IF "%handwork%" == "y" GOTO exit
 echo.
 echo.
 echo Start Pull Request for Feature to master
-git request-pull feature-%feature_branch% origin master
+git request-pull feature-%feature_branch% origin develop
 
 echo Now Please Go To GitHub and Do a Pull Request on feature-%feature_branch%
 echo Or continue with the after-festure-pull-request.bat
