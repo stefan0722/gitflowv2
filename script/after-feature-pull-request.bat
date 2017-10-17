@@ -2,9 +2,22 @@
 setlocal
 cls
 
+git fetch origin
 git show-branch --list feature-*
 echo.
-SET /P release_branch="Please enter version of release branch: feature-"
+SET /P feature_branch="Please enter version of feature branch: feature-"
+echo.
+echo.
+echo "Switch to feature workspace"
+git checkout -b feature-%feature_branch% origin/feature-%feature_branch%
+echo.
+echo.
+echo "Merge from develop branch"
+git merge develop
+echo.
+echo.
+echo "Switch to develop branch"
+git checkout develop
 echo.
 echo.
 echo Merge feature-%feature_branch% to develop
