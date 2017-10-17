@@ -4,7 +4,7 @@
 
   <groupId>at.srfg.test</groupId>
   <artifactId>gitflowv2</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>gitflowv2</name>
@@ -15,7 +15,7 @@
   </properties>
 
   <build>
-    <plugins>
+    <!--<plugins>
       <plugin>
         <groupId>external.atlassian.jgitflow</groupId>
         <artifactId>jgitflow-maven-plugin</artifactId>
@@ -32,7 +32,7 @@
           <noDeploy>true</noDeploy>
         </configuration>
       </plugin>
-    </plugins>
+    </plugins>-->
   </build>
 
 
