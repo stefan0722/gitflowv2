@@ -50,7 +50,7 @@ git branch -d feature-%feature_branch%
 echo.
 echo.
 echo Increasing version of develop branch
-call "%M2_HOME%/bin/mvn" release:update-versions
+call "%M2_HOME%/bin/mvn" versions:set -DnextSnapshot=true
 echo.
 echo.
 echo Commiting update POM Files
