@@ -41,25 +41,11 @@ SET /P handwork="Do you need to do some manual merges [y/n]?"
 IF "%handwork%" == "y" GOTO exit
 echo.
 echo.
-echo Merge feature-%feature_branch% to develop
-git merge --no-ff feature-%feature_branch%
-echo.
-echo.
-echo Delete feature branch locally
-git branch -d feature-%feature_branch%
-echo.
-echo.
-echo Increasing version of develop branch
-call "%M2_HOME%/bin/mvn" versions:set -DnextSnapshot=true
-echo.
-echo.
-echo Commiting update POM Files
-:: commit the pom file with the updated version
-git commit -m "changing develop version to new version" *pom.xml
-echo.
-echo.
-echo Push the merge with version change to GitHub
-git push origin develop
+echo Start Pull Request for Feature to master
+git request-pull feature-%feature_branch% origin master
+
+echo Now Please Go To GitHub and Do a Pull Request on feature-%feature_branch%
+echo Or continue with the after-festure-pull-request.bat
 
 endlocal
 
