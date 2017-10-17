@@ -14,5 +14,6 @@ public class App
         System.out.println( "This is now a paralell fix on dev branch!" );
         System.out.println( "This line is added to the second feature!" );
         System.out.println( "Add release plugin on dev branch" );
+        System.out.println( "this is now part of the 5. Feature" );
     }
 }
