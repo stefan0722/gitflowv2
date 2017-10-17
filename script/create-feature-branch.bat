@@ -1,5 +1,6 @@
 @echo off
 setlocal
+cls
 :: This is a script for the GIT Flow process to create a new feature branch
 
 echo Retrieve all changes from GitHub
@@ -40,14 +41,14 @@ echo.
 echo.
 :: crate new feature branch locally
 echo Create new Feature branch locally
-SET /P feature_branch_name="Please enter the name of the feature branch [feature-]"
+SET /P feature_branch_name="Please enter the name of the feature branch: feature-"
 git checkout -b feature-%feature_branch_name% develop
 
 echo.
 echo.
 :: increase version on feature branch
 echo Increasing version of feature branch
-"%M2_HOME%/bin/mvn" release:update-versions
+call "%M2_HOME%/bin/mvn" release:update-versions
 
 echo.
 echo.
