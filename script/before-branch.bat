@@ -25,8 +25,7 @@ echo.
 :: will move the feature branch as not commited files
 echo Commit all local changes
 SET /P confirm_1="Should the changes be commited [y/n]?"
-IF /I "%confirm_1%" == "n" goto error
-git commit -a
+IF /I "%confirm_1%" == "y" git commit -a
 
 echo.
 echo.
