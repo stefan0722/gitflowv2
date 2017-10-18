@@ -17,6 +17,6 @@ public class App
         System.out.println( "this is now part of the 5. Feature" );
         System.out.println( "this is now part of the 6. Feature" );
         System.out.println( "this is now part of the 7. Feature" );
-        System.out.println( "paralell conflicting development submit" );
+        System.out.println( "paralell conflicting development submit!" );
     }
 }
