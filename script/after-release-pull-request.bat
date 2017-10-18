@@ -55,3 +55,7 @@ echo.
 echo.
 echo Deploy new master version
 call "%M2_HOME%/bin/mvn" deploy
+echo.
+echo.
+echo Finally Change back to develop workspace
+git checkout develop
