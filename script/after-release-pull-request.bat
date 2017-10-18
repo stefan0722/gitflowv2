@@ -47,3 +47,11 @@ echo.
 echo.
 echo Push the merge with version change to GitHub
 git push origin develop
+echo.
+echo.
+echo Changing to Master repository
+git checkout v%release_branch%
+echo.
+echo.
+echo Deploy new master version
+call "%M2_HOME%/bin/mvn" deploy
