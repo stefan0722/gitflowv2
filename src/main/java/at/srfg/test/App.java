@@ -16,6 +16,7 @@ public class App
         System.out.println( "Add release plugin on dev branch" );
         System.out.println( "this is now part of the 5. Feature" );
         System.out.println( "this is now part of the 6. Feature" );
+        System.out.println( "this is now part of the 7. Feature" );
         System.out.println( "paralell conflicting development submit" );
     }
 }
