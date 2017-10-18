@@ -14,7 +14,7 @@ echo.
 echo.
 :: increase version on feature branch
 echo -- Step 7:     Set version in POM to %release_version%
-call "%M2_HOME%/bin/mvn" versions:set -DnewVersion=%release_version% -DremoveSnapshot=true -DprocessAllModules=true -DgenerateBackupPoms=false
+call "%M2_HOME%/bin/mvn" versions:set -DnewVersion=%release_version% -DprocessAllModules=true -DgenerateBackupPoms=false
 
 echo.
 echo.
