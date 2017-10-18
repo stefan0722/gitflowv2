@@ -3,7 +3,7 @@
 
   <groupId>at.srfg.test</groupId>
   <artifactId>gitflowv2</artifactId>
-  <version>1.7.0-SNAPSHOT</version>
+  <version>1.7.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>gitflowv2</name>
