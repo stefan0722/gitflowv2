@@ -11,10 +11,6 @@ echo Change local branch to master
 git checkout master
 echo.
 echo.
-echo Get the latest version of master
-git pull origin master
-echo.
-echo.
 echo Merge release branch to master
 git merge --no-ff release-%release_branch%
 echo.
