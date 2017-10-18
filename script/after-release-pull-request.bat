@@ -37,6 +37,9 @@ echo.
 echo -- Step 8:       Merge release-%release_branch% to develop --
 git merge --no-ff release-%release_branch%
 echo.
+SET /P handwork="Do you need to do some manual merges [y/n]?"
+IF /I "%handwork%" == "y" goto error
+echo.
 echo.
 echo -- Step 9:       Update versions of develop branch to next Snapshot version --
 call "%M2_HOME%/bin/mvn" versions:set -DnextSnapshot=true -DprocessAllModules=true -DgenerateBackupPoms=false
@@ -67,3 +70,5 @@ echo.
 echo.
 echo -- Step 15:       Change local repository to develop branch --
 git checkout develop
+
+:error

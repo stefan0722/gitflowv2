@@ -9,6 +9,8 @@ echo -- Step 1:     Change local repository to feature-%feature_branch% branch -
 git checkout feature-%feature_branch%
 echo.
 echo.
+rem do a commit if local changes uncommite!
+
 echo -- Step 2:     Pull current version of feature-%feature_branch% from GitHub --
 git pull origin feature-%feature_branch%
 echo.
