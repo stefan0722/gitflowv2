@@ -19,5 +19,6 @@ public class App
         System.out.println( "this is now part of the 7. Feature" );
         System.out.println( "this is now part of the emplexed Feature changed from stefan0722" );
         System.out.println( "paralell conflicting development submit!" );
+        System.out.println( "Produce a conflict with dev branch" );
     }
 }
