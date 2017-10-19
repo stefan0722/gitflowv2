@@ -14,7 +14,7 @@ notCommited = subprocess.check_output(["git","status","-s"]).decode("utf-8")
 print(notCommited)
 print()
 print()
-if notCommited.splitlines().__sizeof__() > 0 :
+if notCommited is not '' :
     eingabe = input("Sollen die Änderungen local commited werden? [Y/N]: ")
     if eingabe is "Y" :
         message = input("Bitte Commit message eingeben: ")
