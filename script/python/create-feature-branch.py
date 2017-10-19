@@ -1,2 +1,1 @@
-from subprocess import call
-call[]
+print("Juhuuuu !")
