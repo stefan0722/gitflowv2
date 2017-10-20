@@ -7,10 +7,15 @@ exec(open("before-branch.py").read())
 print("\n\n-- Step 4:     Create new Feature branch locally")
 featureBranchName = input("Please enter name of feature branch: feature-")
 featureVersion = input("Please enter the version of the feature: ")
-subprocess.call(["git","checkout","-b","feature-" + featureBranchName,"develop"])
+alreadyExists = subprocess.call(["git","checkout","-b","feature-" + featureBranchName,"develop"])
+if alreadyExists is 128 :
+    subprocess.call(["git","checkout","feature-" + featureBranchName],shell=True)
 
 print("\n\n-- Step 5:     Increasing version of feature-" + featureBranchName + " to " + featureVersion + "-SNAPSHOT")
-subprocess.call([os.environ.get('M2_HOME')+"/bin/mvn","versions:set","-DnewVersion="+featureVersion+"-SNAPSHOT","-DprocessAllModules=true","-DgenerateBackupPoms=false"])
+subprocess.call([os.environ.get('M2_HOME')+"/bin/mvn","versions:set",
+                 "-f=..//..//",
+                 "-DnewVersion="+featureVersion+"-SNAPSHOT","-DprocessAllModules=true",
+                 "-DgenerateBackupPoms=false"],shell=True)
 
 print("\n\n-- Step 6:     Commiting update POM Files")
 subprocess.call(["git","commit","-m","Change feature branch version to " + featureVersion + "-SNAPSHOT","*pom.xml"])
