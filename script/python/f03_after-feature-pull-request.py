@@ -36,7 +36,7 @@ subprocess.call([os.environ.get('M2_HOME')+"/bin/mvn","versions:set",
                  "-DgenerateBackupPoms=false"],shell=True)
 
 print("\n-- Step 7:       Commiting update POM Files to develop branch")
-subprocess.call(["git","commit","-m","Change feature branch version to next SNAPSHOT version",projectDir + "**pom.xml"])
+subprocess.call(["git","commit","-m","Change develop branch version to next SNAPSHOT version",projectDir + "**pom.xml"])
 
 print("\n-- Step 8:       Push the changes with version change to GitHub")
 eingabe1 = input("Should all commits be pushed to GitHub? [Y/N]: ")
