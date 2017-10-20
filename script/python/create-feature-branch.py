@@ -4,7 +4,7 @@ import os, subprocess, getpass
 
 exec(open("before-branch.py").read())
 
-projectDir = "..//..//"
+projectDir = input("Please enter the project directory: ")
 
 print("\n\n-- Step 4:     Create new Feature branch locally")
 featureBranchName = input("Please enter name of feature branch: feature-")
