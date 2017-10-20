@@ -26,9 +26,8 @@ print("\n-- Step 3:     Change local repository to feature-"+ featureBranchName 
 subprocess.call(["git","checkout","feature-" + featureBranchName],shell=True)
 
 print("\n-- Step 4:     Change local repository to feature-"+ featureBranchName +" branch --")
-mergeResult = subprocess.check_output(["git","merge","develop"]).decode("utf-8")
-print(mergeResult+ "\n")
-if "CONFLICT" in mergeResult :
+mergeResult = subprocess.call(["git","merge","develop"])
+if mergeResult is 1 :
     exit("Please resolve conflict before continue")
 
 print("-- Step 5:     Pushing changes of feature-" + featureBranchName + " to GitHub --")
