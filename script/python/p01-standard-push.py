@@ -2,6 +2,14 @@
 
 import subprocess, os, getpass
 
+#get current branch name
+branchList = subprocess.check_output(["git","branch","--list"]).decode("utf-8")
+branchName = ""
+for name in branchList.splitlines() :
+    if "* " in name :
+        branchName = name.replace("* ","")
+        break
+
 # Standard Push script
 print("-- Step 1:     Commit not commited files --")
 notCommited = subprocess.check_output(["git","status","-s"]).decode("utf-8")
@@ -12,7 +20,7 @@ if notCommited is not '' :
         subprocess.call(["git","commit","-a","-m",message])
 
 print("-- Step 2:     Pull changes from origin")
-errorCode = subprocess.call(["git","pull","origin"])
+errorCode = subprocess.call(["git","pull","origin",branchName])
 if errorCode is not 0 :
     exit("Please resolve CONFLICTS and try again")
 
@@ -34,4 +42,4 @@ if eingabe1 is "Y" :
     username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
     password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
     remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
-    subprocess.call(["git","push",remoteUrl])
+    subprocess.call(["git","push",remoteUrl,branchName])
