@@ -4,7 +4,7 @@ import subprocess, getpass, webbrowser
 print("\nAvailable local release branches: \n")
 subprocess.call(["git","show-branch","--list","release-*"])
 
-releaseVersion = input("Please enter version of Release: ")
+releaseVersion = input("Please enter name of release branch: release-")
 print("\n-- Step 1:     Change local repository to release-"+ releaseVersion +" branch --")
 subprocess.call(["git","checkout","release-" + releaseVersion],shell=True)
 
