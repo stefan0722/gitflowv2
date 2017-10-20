@@ -1,4 +1,6 @@
-import subprocess
+#!/usr/bin/python
+
+import subprocess, getpass
 
 print("-- Step 1:     Change local repository to develop branch --")
 ahead = subprocess.check_output(["git","checkout","develop"]).decode("utf-8")
@@ -21,7 +23,12 @@ print(upToDate)
 if "Already up-to-date" not in str(upToDate) :
     exit("Please check pulled changes and reexecute this script again")
 
-if "git push" in ahead or notCommited is not '' > 0 :
-    eingabe1 = input("Should all commits be pushed to GitHub? [Y/N]")
+if "git push" in ahead or notCommited is not '':
+    eingabe1 = input("Should all commits be pushed to GitHub? [Y/N]: ")
     if eingabe1 is "Y" :
-        subprocess.call(["git","push","origin","develop"])
+        remoteUrl = subprocess.check_output(["git","config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
+        username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
+        password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
+        remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
+        subprocess.call(["git","push",remoteUrl,"develop"])
+
