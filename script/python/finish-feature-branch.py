@@ -41,4 +41,4 @@ if eingabe1 is "Y" :
     subprocess.call(["git","push",remoteUrl,"feature-" + featureBranchName])
 
     print("Please Open Pull Request")
-    webbrowser.open_new(remoteUrl + "/compare/feature-" + featureBranchName+ "?expand=1")
+    webbrowser.open_new(remoteUrl + "/compare/develop...feature-" + featureBranchName+ "?expand=1")
