@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import subprocess, getpass, webbrowser
 
 print("\nAvailable local feature branches: \n")

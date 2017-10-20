@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import subprocess, os, getpass
 
 print("\nAvailable local feature branches: \n")
