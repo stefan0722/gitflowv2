@@ -73,3 +73,14 @@ if eingabe1 is "Y" :
     password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
     remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
     subprocess.call(["git","push",remoteUrl,"develop"])
+
+print("\n-- Step 13:     Change local repository to v"+ releaseVersion +" tag --")
+subprocess.call(["git","checkout","v" + releaseVersion],shell=True)
+
+print("\n-- Step 14:     Call Maven deploy for deploying the tagged result to artifactory --")
+goal = input("Please enter maven goal to be executed [install|deploy]?")
+subprocess.call([os.environ.get('M2_HOME')+"/bin/mvn",goal,
+                 "-f=" + projectDir],shell=True)
+
+print("\n-- Step 15:     get back to deploy --")
+subprocess.call(["git","checkout","deploy"],shell=True)
