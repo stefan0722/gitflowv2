@@ -62,7 +62,7 @@ class GitFunctions:
             if file_pattern is None:
                 subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-a", "-m", message])
                 return
-            subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-a", "-m", message, self.PROJECT_HOME +
+            subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-m", message, self.PROJECT_HOME +
                              file_pattern])
 
     def has_files_to_commit(self):
@@ -107,6 +107,14 @@ class GitFunctions:
     def get_project_home(self):
         if self.PROJECT_HOME is None:
             self.PROJECT_HOME = input("Please enter the project directory: ")
+
+    def show_branch_state(self,branch_prefix):
+        subprocess.call(["git", "-C", self.PROJECT_HOME,"show-branch","--list",branch_prefix + "-*"])
+
+    def merge_branch(self, branch_from):
+        merge_result = subprocess.call(["git","-C", self.PROJECT_HOME,"merge", branch_from])
+        if merge_result is 1 :
+            exit("Please resolve conflict before continue")
 
     def get_clean_branch_state(self, branch):
         print("-- Step 1:     Change local repository to " + branch + " --")
