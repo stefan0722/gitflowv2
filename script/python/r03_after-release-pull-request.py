@@ -47,7 +47,7 @@ if eingabe2 is "Y" :
     remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
     subprocess.call(["git","push",remoteUrl,"v"+releaseVersion])
 
-exec(open("before-branch.py").read())
+exec(open("gitflow.py").read())
 
 print("\n-- Step 8:       Merge release-" + releaseVersion + "to develop")
 subprocess.call(["git","merge","--no-ff","release-" + releaseVersion])

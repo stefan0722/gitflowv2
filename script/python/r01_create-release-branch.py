@@ -2,7 +2,7 @@
 # Test Comment for rebasing
 import os, subprocess, getpass
 
-exec(open("before-branch.py").read())
+exec(open("gitflow.py").read())
 
 projectDir = input("Please enter the project directory: ")
 

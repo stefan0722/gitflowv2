@@ -21,7 +21,7 @@ if "Already up-to-date" not in str(upToDate) :
     exit("Please check pulled changes and reexecute this script again")
 
 # Bring develop branch in sync
-exec(open("before-branch.py").read())
+exec(open("gitflow.py").read())
 
 print("\n-- Step 3:     Change local repository to feature-"+ featureBranchName +" branch --")
 subprocess.call(["git","checkout","feature-" + featureBranchName],shell=True)
