@@ -82,5 +82,5 @@ goal = input("Please enter maven goal to be executed [install|deploy]?")
 subprocess.call([os.environ.get('M2_HOME')+"/bin/mvn",goal,
                  "-f=" + projectDir],shell=True)
 
-print("\n-- Step 15:     get back to deploy --")
-subprocess.call(["git","checkout","deploy"],shell=True)
+print("\n-- Step 15:     get back to develop --")
+subprocess.call(["git","checkout","develop"],shell=True)
