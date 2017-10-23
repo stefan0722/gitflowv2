@@ -36,7 +36,7 @@ def commit_changes():
 
 
 def has_files_to_commit():
-    not_committed = subprocess.check_output(["git","status","-s"]).decode("utf-8")
+    not_committed = subprocess.check_output(["git","status","--porcelain","--untracked-files=no"]).decode("utf-8")
     print(not_committed + "\n")
     if not_committed.strip() is not '' :
         return True
