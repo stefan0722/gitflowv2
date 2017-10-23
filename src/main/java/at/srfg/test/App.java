@@ -22,6 +22,7 @@ public class App
         System.out.println( "Produce a conflict with dev branch" );
         System.out.println( "this is now part of the 10. Feature" );
         System.out.println( "Yesss, my first change" );
+        System.out.println( "change without commit" );
         System.out.println( "Conflict in Dev Branch" );
     }
 }
