@@ -4,6 +4,7 @@ import subprocess, getpass, os
 
 M2_HOME = os.environ.get("M2_HOME")
 PROJECT_HOME = ""
+GIT_USER_NAME = ""
 
 
 def load_environment_var() :
@@ -18,10 +19,13 @@ def load_environment_var() :
             if key is "PROJECT_HOME":
                 global PROJECT_HOME
                 PROJECT_HOME = value
+            if key is "GIT_USER_NAME":
+                global GIT_USER_NAME
+                GIT_USER_NAME = value
 
 
 def checkout_branch(branch):
-    text = subprocess.check_output(["git","checkout",branch]).decode("utf-8")
+    text = subprocess.check_output(["git","-C",PROJECT_HOME,"checkout",branch]).decode("utf-8")
     print(text + "\n")
     if "git push" in text :
         return True
@@ -32,11 +36,11 @@ def commit_changes():
     eingabe = input("Should the changes be committed to local repository? [Y/N]: ")
     if eingabe is "Y":
         message = input("Please enter commit message: ")
-        subprocess.call(["git", "commit", "-a", "-m", message])
+        subprocess.call(["git","-C",PROJECT_HOME,"commit", "-a", "-m", message])
 
 
 def has_files_to_commit():
-    not_committed = subprocess.check_output(["git","status","--porcelain","--untracked-files=no"]).decode("utf-8")
+    not_committed = subprocess.check_output(["git","-C",PROJECT_HOME,"status","--porcelain","--untracked-files=no"]).decode("utf-8")
     print(not_committed + "\n")
     if not_committed.strip() is not '' :
         return True
@@ -44,22 +48,36 @@ def has_files_to_commit():
 
 
 def pull_branch(branch):
-    text = subprocess.check_output(["git","pull","origin",branch]).decode("utf-8")
+    text = subprocess.check_output(["git","-C",PROJECT_HOME,"pull","origin",branch]).decode("utf-8")
     print(text + "\n")
     if "Already up-to-date" in text:
         return True
     return False
 
 
+def get_remote_url() :
+    return subprocess.check_output(["git","-C",PROJECT_HOME,"config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
+
+
+def get_username() :
+    if "" is GIT_USER_NAME:
+        return subprocess.check_output(["git","-C",PROJECT_HOME,"config","--get","user.name"]).decode("utf-8").replace("\n","")
+    return GIT_USER_NAME
+
+
 def push_branch(branch):
     eingabe = input("Should all commits of " + branch + " be pushed to GitHub? [Y/N]: ")
     if eingabe is "Y" :
-        remoteUrl = subprocess.check_output(["git","config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
-        username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
+        remoteUrl = get_remote_url()
+        username = get_username()
         password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
         remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
-        subprocess.call(["git","push",remoteUrl,branch])
+        subprocess.check_output(["git","-C",PROJECT_HOME,"push",remoteUrl,branch])
+        print("Pulling succesful")
+    print("Pulling not done!")
 
+
+load_environment_var()
 
 print("-- Step 1:     Change local repository to develop branch --")
 ahead = checkout_branch("develop")
@@ -68,11 +86,9 @@ print("-- Step 2:     Show Status of develop branch --")
 has_commits = has_files_to_commit()
 if has_commits is True :
     commit_changes()
-print("\n\n")
 
 print("-- Step 3:     Pull current version of develop from GitHub --")
 upToDate = pull_branch("develop")
-print(upToDate)
 
 if not upToDate :
     exit("Please check pulled changes and reexecute this script again")
