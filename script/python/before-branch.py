@@ -21,40 +21,62 @@ def load_environment_var() :
 
 
 def checkout_branch(branch):
-    return subprocess.check_output(["git","checkout",branch]).decode("utf-8")
+    text = subprocess.check_output(["git","checkout",branch]).decode("utf-8")
+    print(text + "\n")
+    if "git push" in text :
+        return True
+    return False
 
 
 def commit_changes():
-    not_commited = subprocess.check_output(["git","status","-s"]).decode("utf-8")
-    print(not_commited + "\n")
-    if not_commited is not '' :
-        eingabe = input("Should the changes be commited to local repository? [Y/N]: ")
-        if eingabe is "Y" :
-            message = input("Please enter commit message: ")
-            subprocess.call(["git","commit","-a","-m",message])
+    eingabe = input("Should the changes be committed to local repository? [Y/N]: ")
+    if eingabe is "Y":
+        message = input("Please enter commit message: ")
+        subprocess.call(["git", "commit", "-a", "-m", message])
 
 
-print("-- Step 1:     Change local repository to develop branch --")
-ahead = checkout_branch("develop")
-print(ahead + "\n\n")
+def has_files_to_commit():
+    not_committed = subprocess.check_output(["git","status","-s"]).decode("utf-8")
+    print(not_committed + "\n")
+    if not_committed.strip() is not '' :
+        return True
+    return False
 
-print("-- Step 2:     Show Status of develop branch --")
-commit_changes()
-print("\n\n")
 
-print("-- Step 3:     Pull current version of develop from GitHub --")
-upToDate = subprocess.check_output(["git","pull","origin","develop"]).decode("utf-8")
-print(upToDate)
+def pull_branch(branch):
+    text = subprocess.check_output(["git","pull","origin",branch]).decode("utf-8")
+    print(text + "\n")
+    if "Already up-to-date" in text:
+        return True
+    return False
 
-if "Already up-to-date" not in str(upToDate) :
-    exit("Please check pulled changes and reexecute this script again")
 
-if "git push" in ahead or notCommited is not '':
-    eingabe1 = input("Should all commits of develop be pushed to GitHub? [Y/N]: ")
-    if eingabe1 is "Y" :
+def push_branch(branch):
+    eingabe = input("Should all commits of " + branch + " be pushed to GitHub? [Y/N]: ")
+    if eingabe is "Y" :
         remoteUrl = subprocess.check_output(["git","config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
         username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
         password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
         remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
-        subprocess.call(["git","push",remoteUrl,"develop"])
+        subprocess.call(["git","push",remoteUrl,branch])
+
+
+print("-- Step 1:     Change local repository to develop branch --")
+ahead = checkout_branch("develop")
+
+print("-- Step 2:     Show Status of develop branch --")
+has_commits = has_files_to_commit()
+if has_commits is True :
+    commit_changes()
+print("\n\n")
+
+print("-- Step 3:     Pull current version of develop from GitHub --")
+upToDate = pull_branch("develop")
+print(upToDate)
+
+if not upToDate :
+    exit("Please check pulled changes and reexecute this script again")
+
+if ahead is True or has_commits is True:
+    push_branch("develop")
 
