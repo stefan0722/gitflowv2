@@ -41,18 +41,38 @@ class GitFunctions:
         already_exists = subprocess.call(
             ["git", "-C", self.PROJECT_HOME, "checkout", "-b", complete_branch_name, from_branch])
         if already_exists is 128:
-            subprocess.call(["git", "-C", self.PROJECT_HOME, "checkout", complete_branch_name], shell=True)
+            success = subprocess.call(["git", "-C", self.PROJECT_HOME, "checkout", complete_branch_name], shell=True)
+            self.check_success(success, "Error at checkout of branch")
         return complete_branch_name
 
     def increase_branch_version(self, is_snapshot=True):
-        version = input("Please enter the new version: ")
-        if is_snapshot:
-            version = version + "-SNAPSHOT"
-        subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
+        increase = input("Should the version be increased? [Y/N]: ")
+        if increase is "Y":
+            version = input("Please enter the new version: ")
+            if is_snapshot:
+                version = version + "-SNAPSHOT"
+            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
                          "-f=" + self.PROJECT_HOME,
                          "-DnewVersion=" + version, "-DprocessAllModules=true",
                          "-DgenerateBackupPoms=false"], shell=True)
-        return version
+            self.check_success(success, "Error setting next maven version to " + version)
+            return version
+        return None
+
+    def increase_branch_version_next_snapshot(self):
+        increase = input("Should the version be increased? [Y/N]: ")
+        if increase is "Y":
+            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
+                         "-f=" + self.PROJECT_HOME,
+                         "-DnextSnapshot=true",
+                         "-DprocessAllModules=true",
+                         "-DgenerateBackupPoms=false"], shell=True)
+            self.check_success(success, "Error setting next maven version!")
+
+    def execute_maven_goal(self, maven_goal):
+        success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
+                         "-f=" + self.PROJECT_HOME], shell=True)
+        self.check_success(success, "Error executing " + maven_goal + "!")
 
     def commit_changes(self, message=None, file_pattern=None):
         entry = input("Should the changes be committed to local repository? [Y/N]: ")
@@ -60,10 +80,12 @@ class GitFunctions:
             if message is None:
                 message = input("Please enter commit message: ")
             if file_pattern is None:
-                subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-a", "-m", message])
+                success = subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-a", "-m", message])
+                self.check_success(success, "Error while committing to local repository, please check and try again")
                 return
-            subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-a", "-m", message, self.PROJECT_HOME +
-                             file_pattern])
+            success = subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-m", message, self.PROJECT_HOME +
+                                       "/" + file_pattern])
+            self.check_success(success, "Error while committing to local repository, please check and try again")
 
     def has_files_to_commit(self):
         not_committed = subprocess.check_output(
@@ -99,14 +121,48 @@ class GitFunctions:
                 self.GIT_PASSWORD = getpass.getpass("Please enter password for " + remote_url + ": ")
             remote_url = remote_url.replace("https://github.com/",
                                             "https://" + username + ":" + self.GIT_PASSWORD + "@github.com/")
-            subprocess.check_output(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch])
+            devnull = open(os.devnull,'w')
+            success = subprocess.call(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch]
+                                      ,stdout=devnull, stderr=devnull)
+            if success is not 0:
+                self.GIT_PASSWORD = None
+                exit("Error while pushing to GitHub. Please check username in Git config.name and password")
             print("Pushing successful")
             return
-        print("Pushing not done!")
+        exit("Please Push to branch in oder to continue!")
 
     def get_project_home(self):
         if self.PROJECT_HOME is None:
             self.PROJECT_HOME = input("Please enter the project directory: ")
+
+    def show_branch_state(self, branch_prefix):
+        subprocess.call(["git", "-C", self.PROJECT_HOME, "show-branch", "--list", branch_prefix + "-*"])
+
+    def merge_branch(self, branch_from):
+        merge_result = subprocess.call(["git", "-C", self.PROJECT_HOME, "merge", branch_from])
+        self.check_success(merge_result, "Please resolve conflict before continue")
+
+    def merge_branch_no_ff(self, branch_from):
+        merge_result = subprocess.call(["git", "-C", self.PROJECT_HOME, "merge", "--no-ff", branch_from])
+        self.check_success(merge_result, "Please resolve conflict before continue")
+
+    def delete_branch_locally(self, branch):
+        delete_result = subprocess.call(["git", "-C", self.PROJECT_HOME, "branch", "-d", branch])
+        self.check_success(delete_result, "An error occured while deleting the branch")
+
+    def get_current_branch_name(self):
+        branch_list = subprocess.check_output(["git","-C", self.PROJECT_HOME,"branch","--list"]).decode("utf-8")
+        branch_name = None
+        for name in branch_list.splitlines() :
+            if "* " in name :
+                branch_name = name.replace("* ","")
+                return branch_name
+        return branch_name
+
+    def create_release_tag(self, release_version):
+        success = subprocess.call(["git","tag","-a","v" + release_version,
+                                   "-m","Creating Tag for Release v" + release_version])
+        self.check_success(success,"Error creating a tag")
 
     def get_clean_branch_state(self, branch):
         print("-- Step 1:     Change local repository to " + branch + " --")
@@ -125,3 +181,8 @@ class GitFunctions:
 
         if ahead is True or has_commits is True:
             self.push_branch(branch)
+
+    @staticmethod
+    def check_success(exit_code, error_msg):
+        if exit_code is not 0:
+            exit(error_msg)

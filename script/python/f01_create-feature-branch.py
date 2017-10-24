@@ -3,18 +3,18 @@
 
 from helper import gitflow
 
-gitflowfunc = gitflow.GitFunctions()
+git_flow_func = gitflow.GitFunctions()
 
-gitflowfunc.get_clean_branch_state("develop")
+git_flow_func.get_clean_branch_state("develop")
 
 print("\n\n-- Step 4:     Create new Feature branch locally")
-branchName = gitflowfunc.checkout_new_branch("feature","develop")
+branchName = git_flow_func.checkout_new_branch("feature", "develop")
 
 print("\n\n-- Step 5:     Increasing version of " + branchName)
-branchVersion = gitflowfunc.increase_branch_version()
+branchVersion = git_flow_func.increase_branch_version()
 
 print("\n\n-- Step 6:     Committing update POM Files to " + branchName)
-gitflowfunc.commit_changes("Changed " + branchName + " version to " + branchVersion,"**pom.xml")
+git_flow_func.commit_changes("Changed " + branchName + " version to " + branchVersion, "**pom.xml")
 
 print("\n\n-- Step 7:     Push changes of " + branchName + " to GutHub")
-gitflowfunc.push_branch(branchName)
+git_flow_func.push_branch(branchName)
