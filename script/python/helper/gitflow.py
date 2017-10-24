@@ -59,7 +59,7 @@ class GitFunctions:
     def increase_branch_version_next_snapshot(self):
         success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
                          "-f=" + self.PROJECT_HOME,
-                         "-DnextSnapshotVersion=true",
+                         "-DnextSnapshot=true",
                          "-DprocessAllModules=true",
                          "-DgenerateBackupPoms=false"], shell=True)
         self.check_success(success, "Error setting next maven version!")
