@@ -45,10 +45,11 @@ class GitFunctions:
             self.check_success(success, "Error at checkout of branch")
         return complete_branch_name
 
-    def increase_branch_version(self, is_snapshot=True):
+    def increase_branch_version(self, is_snapshot=True, version=None):
         increase = input("Should the version be increased? [Y/N]: ")
         if increase is "Y":
-            version = input("Please enter the new version: ")
+            if version is None:
+                version = input("Please enter the new version: ")
             if is_snapshot:
                 version = version + "-SNAPSHOT"
             success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
