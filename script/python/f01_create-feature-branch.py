@@ -10,6 +10,7 @@ git_flow_func.get_clean_branch_state("develop")
 print("\n\n-- Step 4:     Create new Feature branch locally")
 branchName = git_flow_func.checkout_new_branch("feature", "develop")
 
+print("\n-- Current version: " + git_flow_func.get_project_version())
 print("\n\n-- Step 5:     Increasing version of " + branchName)
 branchVersion = git_flow_func.increase_branch_version()
 

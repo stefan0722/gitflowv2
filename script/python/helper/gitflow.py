@@ -47,19 +47,22 @@ class GitFunctions:
         return complete_branch_name
 
     def increase_branch_version(self, is_snapshot=True, version=None):
-        increase = input("Should the version be increased? [Y/N]: ")
-        if increase is "Y":
-            if version is None:
-                version = input("Please enter the new version: ")
-            if is_snapshot:
-                version = version + "-SNAPSHOT"
-            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
-                         "-f=" + self.PROJECT_HOME,
-                         "-DnewVersion=" + version, "-DprocessAllModules=true",
-                         "-DgenerateBackupPoms=false"], shell=True)
-            self.check_success(success, "Error setting next maven version to " + version)
-            return version
-        return None
+        if version is None :
+            increase = input("Should the version be increased? [Y/N]: ")
+            if increase is "Y":
+                return self.__call_increase_version__(version,is_snapshot)
+        else:
+            return self.__call_increase_version__(version,is_snapshot)
+
+    def __call_increase_version__(self, version, is_snapshot):
+        if is_snapshot:
+            version = version + "-SNAPSHOT"
+        success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
+                                   "-f=" + self.PROJECT_HOME,
+                                   "-DnewVersion=" + version, "-DprocessAllModules=true",
+                                   "-DgenerateBackupPoms=false"], shell=True)
+        self.check_success(success, "Error setting next maven version to " + version)
+        return version
 
     def increase_branch_version_next_snapshot(self):
         increase = input("Should the version be increased? [Y/N]: ")
