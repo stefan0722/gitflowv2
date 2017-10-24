@@ -49,13 +49,13 @@ class GitFunctions:
             self.check_success(success, "Error at checkout of branch")
         return complete_branch_name
 
-    def increase_branch_version(self, is_snapshot=True, version=None, property=None):
+    def increase_branch_version(self, is_snapshot=True, version=None):
         if version is None:
             increase = input("Should the version be increased? [Y/N]: ")
             if increase is "Y":
-                return self.__call_increase_version__(version, property, is_snapshot)
+                return self.__call_increase_version__(version, is_snapshot)
         else:
-            return self.__call_increase_version__(version, property, is_snapshot)
+            return self.__call_increase_version__(version, is_snapshot)
 
     def __call_increase_version__(self, version, is_snapshot):
         if is_snapshot:
@@ -72,7 +72,8 @@ class GitFunctions:
                                        "-DallowSnapshots=true",
                                        "-Dproperty=" + self.VERSION_PROPERTY,
                                        "-DgenerateBackupPoms=false"], shell=True)
-            self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY + " to " + version)
+            self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY + " to " +
+                               version)
         return version
 
     def increase_branch_version_next_snapshot(self):
@@ -92,7 +93,7 @@ class GitFunctions:
                                            "-DallowSnapshots=true",
                                            "-Dproperty=" + self.VERSION_PROPERTY,
                                            "-DgenerateBackupPoms=false"], shell=True)
-                self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY )
+                self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY)
 
     def execute_maven_goal(self, maven_goal):
         success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
@@ -147,8 +148,8 @@ class GitFunctions:
             remote_url = remote_url.replace("https://github.com/",
                                             "https://" + username + ":" + self.GIT_PASSWORD + "@github.com/")
             devnull = open(os.devnull, 'w')
-            success = subprocess.call(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch]
-                                      , stdout=devnull, stderr=devnull)
+            success = subprocess.call(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch],
+                                      stdout=devnull, stderr=devnull)
             if success is not 0:
                 self.GIT_PASSWORD = None
                 exit("Error while pushing to GitHub. Please check username in Git config.name and password")
