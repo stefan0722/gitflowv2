@@ -9,7 +9,7 @@ git_flow_func = gitflow.GitFunctions()
 git_flow_func.get_clean_branch_state("develop")
 
 print("\n-- Step 5:     Create new release branch locally")
-release_branch = git_flow_func.checkout_new_branch("release-","develop")
+release_branch = git_flow_func.checkout_new_branch("release", "develop")
 
 print("\n-- Step 5:     Increasing version of " + release_branch)
 release_version = git_flow_func.increase_branch_version(is_snapshot=False)
