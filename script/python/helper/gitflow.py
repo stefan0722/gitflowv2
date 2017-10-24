@@ -3,6 +3,7 @@
 import subprocess
 import getpass
 import os
+import xml.etree.ElementTree as ET
 
 
 class GitFunctions:
@@ -45,10 +46,11 @@ class GitFunctions:
             self.check_success(success, "Error at checkout of branch")
         return complete_branch_name
 
-    def increase_branch_version(self, is_snapshot=True):
+    def increase_branch_version(self, is_snapshot=True, version=None):
         increase = input("Should the version be increased? [Y/N]: ")
         if increase is "Y":
-            version = input("Please enter the new version: ")
+            if version is None:
+                version = input("Please enter the new version: ")
             if is_snapshot:
                 version = version + "-SNAPSHOT"
             success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
@@ -185,6 +187,10 @@ class GitFunctions:
 
         if ahead is True or has_commits is True:
             self.push_branch(branch)
+
+    def get_project_version(self):
+        return ET.parse(open(self.PROJECT_HOME + "/pom.xml")).getroot()\
+            .find('{http://maven.apache.org/POM/4.0.0}version').text
 
     @staticmethod
     def check_success(exit_code, error_msg):
