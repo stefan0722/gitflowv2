@@ -1,30 +1,20 @@
 #!/usr/bin/python
+
 # Test Comment for rebasing
-import os, subprocess, getpass
 
-exec(open("before-branch.py").read())
+from helper import gitflow
 
-projectDir = input("Please enter the project directory: ")
+git_flow_func = gitflow.GitFunctions()
 
-print("\n\n-- Step 4:     Create new Release branch locally")
-releaseVersion = input("Please enter the version of the release: ")
-alreadyExists = subprocess.call(["git","checkout","-b","release-" + releaseVersion,"develop"])
-if alreadyExists is 128 :
-    subprocess.call(["git","checkout","feature-" + releaseVersion],shell=True)
+git_flow_func.get_clean_branch_state("develop")
 
-print("\n\n-- Step 5:     Increasing version of release-" + releaseVersion + " to " + releaseVersion)
-subprocess.call([os.environ.get('M2_HOME')+"/bin/mvn","versions:set",
-                 "-f=" + projectDir,
-                 "-DnewVersion="+releaseVersion,"-DprocessAllModules=true",
-                 "-DgenerateBackupPoms=false"],shell=True)
+print("\n-- Step 5:     Create new release branch locally")
+release_branch = git_flow_func.checkout_new_branch("release", "develop")
 
-print("\n\n-- Step 6:     Commiting update POM Files")
-subprocess.call(["git","commit","-m","Change release branch version to " + releaseVersion,projectDir + "**pom.xml"])
+print("\n-- Step 5:     Increasing version of " + release_branch)
+release_version = git_flow_func.increase_branch_version(is_snapshot=False)
 
-pushRequest = input("Should the release branch be pushed to GitHub? [Y/N]: ")
-if pushRequest is "Y":
-    remoteUrl = subprocess.check_output(["git","config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
-    username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
-    password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
-    remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
-    subprocess.call(["git","push",remoteUrl,"release-" + releaseVersion])
+print("\n-- Step 6:     Commiting update POM Files")
+git_flow_func.commit_changes("Changed " + release_branch + " version to " + release_version,"**pom.xml")
+
+git_flow_func.push_branch(release_branch)

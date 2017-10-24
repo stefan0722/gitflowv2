@@ -1,44 +1,28 @@
 #!/usr/bin/python
-import subprocess, getpass, webbrowser
+
+import webbrowser
+
+from helper import gitflow
+
+git_flow_func = gitflow.GitFunctions()
 
 print("\nAvailable local feature branches: \n")
-subprocess.call(["git","show-branch","--list","feature-*"])
+git_flow_func.show_branch_state("feature")
 
-featureBranchName = input("Please enter name of feature branch: feature-")
-print("\n-- Step 1:     Change local repository to feature-"+ featureBranchName +" branch --")
-subprocess.call(["git","checkout","feature-" + featureBranchName],shell=True)
+feature_branch_name = input("Please enter name of feature branch: feature-")
+git_flow_func.get_clean_branch_state("feature-" + feature_branch_name)
 
-notCommited = subprocess.check_output(["git","status","-s"]).decode("utf-8")
-if notCommited is not '' :
-    eingabe = input("Should the changes be commited to local repository? [Y/N]: ")
-    if eingabe is "Y" :
-        message = input("Please enter commit message: ")
-        subprocess.call(["git","commit","-a","-m",message])
+git_flow_func.get_clean_branch_state("develop")
 
-print("-- Step 2:     Pull current version of feature-" + featureBranchName + " from GitHub --")
-upToDate = subprocess.check_output(["git","pull","origin","feature-"+ featureBranchName]).decode("utf-8")
-if "Already up-to-date" not in str(upToDate) :
-    exit("Please check pulled changes and reexecute this script again")
+print("\n-- Step A:     Change local repository to feature-" + feature_branch_name + " branch --")
+git_flow_func.checkout_branch("feature-" + feature_branch_name)
 
-# Bring develop branch in sync
-exec(open("before-branch.py").read())
+print("\n-- Step B:     Merge develop to feature-" + feature_branch_name + " branch --")
+git_flow_func.merge_branch("develop")
 
-print("\n-- Step 3:     Change local repository to feature-"+ featureBranchName +" branch --")
-subprocess.call(["git","checkout","feature-" + featureBranchName],shell=True)
+print("\n-- Step C:     Pushing changes of feature-" + feature_branch_name + " to GitHub --")
+git_flow_func.push_branch("feature-" + feature_branch_name)
 
-print("\n-- Step 4:     Change local repository to feature-"+ featureBranchName +" branch --")
-mergeResult = subprocess.call(["git","merge","develop"])
-if mergeResult is 1 :
-    exit("Please resolve conflict before continue")
-
-print("-- Step 5:     Pushing changes of feature-" + featureBranchName + " to GitHub --")
-eingabe1 = input("Should all commits be pushed to GitHub? [Y/N]: ")
-if eingabe1 is "Y" :
-    remoteUrl = subprocess.check_output(["git","config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
-    username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
-    password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
-    remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
-    subprocess.call(["git","push",remoteUrl,"feature-" + featureBranchName])
-
-    print("Please Open Pull Request")
-    webbrowser.open_new(remoteUrl + "/compare/develop...feature-" + featureBranchName+ "?expand=1")
+print("\n-- Step D:     Open WebBrowser for pull request --")
+webbrowser.open_new(git_flow_func.get_remote_url().replace(".git","") + "/compare/develop...feature-"
+                    + feature_branch_name + "?expand=1")

@@ -1,0 +1,2 @@
+PROJECT_HOME=D:\projects\Test\gitflowv2
+GIT_USER_NAME=stefan0722
