@@ -121,7 +121,8 @@ class GitFunctions:
                 self.GIT_PASSWORD = getpass.getpass("Please enter password for " + remote_url + ": ")
             remote_url = remote_url.replace("https://github.com/",
                                             "https://" + username + ":" + self.GIT_PASSWORD + "@github.com/")
-            success = subprocess.check_output(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch])
+            success = subprocess.call(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch]
+                                      ,stdout=subprocess.PIPE)
             if success is not 0:
                 self.GIT_PASSWORD = None
                 exit("Error while pushing to GitHub. Please check username in Git config.name and password")
