@@ -20,7 +20,7 @@ print("\n-- Step 3:       Increasing version of " + current_branch + " branch")
 git_flow_func.increase_branch_version_next_snapshot()
 
 print("\n-- Step 4:       Commiting update POM Files to " + current_branch + " branch")
-git_flow_func.commit_changes("Change develop branch version to next SNAPSHOT version","**pom.xml")
+git_flow_func.commit_changes("Change " + current_branch + " version to next SNAPSHOT version","**pom.xml")
 
 print("\n-- Step 5:       Push all changes to GitHub")
 git_flow_func.push_branch(current_branch)
