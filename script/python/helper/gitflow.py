@@ -69,6 +69,7 @@ class GitFunctions:
             success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:update-property",
                                        "-f=" + self.PROJECT_HOME,
                                        "-DnewVersion=" + version,
+                                       "-DallowSnapshots=true",
                                        "-Dproperty=" + self.VERSION_PROPERTY,
                                        "-DgenerateBackupPoms=false"], shell=True)
             self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY + " to " + version)
@@ -88,6 +89,7 @@ class GitFunctions:
                 success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:update-property",
                                            "-f=" + self.PROJECT_HOME,
                                            "-DnewVersion=" + project_version,
+                                           "-DallowSnapshots=true",
                                            "-Dproperty=" + self.VERSION_PROPERTY,
                                            "-DgenerateBackupPoms=false"], shell=True)
                 self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY )
