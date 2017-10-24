@@ -11,6 +11,7 @@ class GitFunctions:
     GIT_USER_NAME = None
     M2_HOME = os.environ.get("M2_HOME")
     GIT_PASSWORD = None
+    VERSION_PROPERTY = None
 
     def __init__(self):
         self.load_environment_var()
@@ -28,6 +29,8 @@ class GitFunctions:
                     self.PROJECT_HOME = value
                 if "GIT_USER_NAME" in key:
                     self.GIT_USER_NAME = value
+                if "VERSION_PROPERTY" in key:
+                    self.VERSION_PROPERTY = value
 
     def checkout_branch(self, branch):
         text = subprocess.check_output(["git", "-C", self.PROJECT_HOME, "checkout", branch]).decode("utf-8")
@@ -46,13 +49,13 @@ class GitFunctions:
             self.check_success(success, "Error at checkout of branch")
         return complete_branch_name
 
-    def increase_branch_version(self, is_snapshot=True, version=None):
-        if version is None :
+    def increase_branch_version(self, is_snapshot=True, version=None, property=None):
+        if version is None:
             increase = input("Should the version be increased? [Y/N]: ")
             if increase is "Y":
-                return self.__call_increase_version__(version,is_snapshot)
+                return self.__call_increase_version__(version, property, is_snapshot)
         else:
-            return self.__call_increase_version__(version,is_snapshot)
+            return self.__call_increase_version__(version, property, is_snapshot)
 
     def __call_increase_version__(self, version, is_snapshot):
         if is_snapshot:
@@ -62,21 +65,36 @@ class GitFunctions:
                                    "-DnewVersion=" + version, "-DprocessAllModules=true",
                                    "-DgenerateBackupPoms=false"], shell=True)
         self.check_success(success, "Error setting next maven version to " + version)
+        if self.VERSION_PROPERTY is not None:
+            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:update-property",
+                                       "-f=" + self.PROJECT_HOME,
+                                       "-DnewVersion=" + version,
+                                       "-Dproperty=" + self.VERSION_PROPERTY,
+                                       "-DgenerateBackupPoms=false"], shell=True)
+            self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY + " to " + version)
         return version
 
     def increase_branch_version_next_snapshot(self):
         increase = input("Should the version be increased? [Y/N]: ")
         if increase is "Y":
             success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
-                         "-f=" + self.PROJECT_HOME,
-                         "-DnextSnapshot=true",
-                         "-DprocessAllModules=true",
-                         "-DgenerateBackupPoms=false"], shell=True)
+                                       "-f=" + self.PROJECT_HOME,
+                                       "-DnextSnapshot=true",
+                                       "-DprocessAllModules=true",
+                                       "-DgenerateBackupPoms=false"], shell=True)
             self.check_success(success, "Error setting next maven version!")
+            if self.VERSION_PROPERTY is not None:
+                project_version = self.get_project_version()
+                success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:update-property",
+                                           "-f=" + self.PROJECT_HOME,
+                                           "-DnewVersion=" + project_version,
+                                           "-Dproperty=" + self.VERSION_PROPERTY,
+                                           "-DgenerateBackupPoms=false"], shell=True)
+                self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY )
 
     def execute_maven_goal(self, maven_goal):
         success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
-                         "-f=" + self.PROJECT_HOME], shell=True)
+                                   "-f=" + self.PROJECT_HOME], shell=True)
         self.check_success(success, "Error executing " + maven_goal + "!")
 
     def commit_changes(self, message=None, file_pattern=None):
@@ -126,9 +144,9 @@ class GitFunctions:
                 self.GIT_PASSWORD = getpass.getpass("Please enter password for " + remote_url + ": ")
             remote_url = remote_url.replace("https://github.com/",
                                             "https://" + username + ":" + self.GIT_PASSWORD + "@github.com/")
-            devnull = open(os.devnull,'w')
+            devnull = open(os.devnull, 'w')
             success = subprocess.call(["git", "-C", self.PROJECT_HOME, "push", remote_url, branch]
-                                      ,stdout=devnull, stderr=devnull)
+                                      , stdout=devnull, stderr=devnull)
             if success is not 0:
                 self.GIT_PASSWORD = None
                 exit("Error while pushing to GitHub. Please check username in Git config.name and password")
@@ -156,22 +174,22 @@ class GitFunctions:
         self.check_success(delete_result, "An error occured while deleting the branch")
 
     def get_current_branch_name(self):
-        branch_list = subprocess.check_output(["git","-C", self.PROJECT_HOME,"branch","--list"]).decode("utf-8")
+        branch_list = subprocess.check_output(["git", "-C", self.PROJECT_HOME, "branch", "--list"]).decode("utf-8")
         branch_name = None
-        for name in branch_list.splitlines() :
-            if "* " in name :
-                branch_name = name.replace("* ","")
+        for name in branch_list.splitlines():
+            if "* " in name:
+                branch_name = name.replace("* ", "")
                 return branch_name
         return branch_name
 
     def create_release_tag(self, release_version):
-        success = subprocess.call(["git","-C", self.PROJECT_HOME,"tag","-a","v" + release_version,
-                                   "-m","Creating Tag for Release v" + release_version])
-        self.check_success(success,"Error creating a tag")
+        success = subprocess.call(["git", "-C", self.PROJECT_HOME, "tag", "-a", "v" + release_version,
+                                   "-m", "Creating Tag for Release v" + release_version])
+        self.check_success(success, "Error creating a tag")
 
     def reset_commits(self, number_of_commits=1):
-        success = subprocess.call(["git","-C", self.PROJECT_HOME,"reset","--soft","HEAD~" + str(number_of_commits)])
-        self.check_success(success,"Error reset last commit")
+        success = subprocess.call(["git", "-C", self.PROJECT_HOME, "reset", "--soft", "HEAD~" + str(number_of_commits)])
+        self.check_success(success, "Error reset last commit")
 
     def get_clean_branch_state(self, branch):
         print("-- Step 1:     Change local repository to " + branch + " --")
@@ -192,7 +210,7 @@ class GitFunctions:
             self.push_branch(branch)
 
     def get_project_version(self):
-        return ET.parse(open(self.PROJECT_HOME + "/pom.xml")).getroot()\
+        return ET.parse(open(self.PROJECT_HOME + "/pom.xml")).getroot() \
             .find('{http://maven.apache.org/POM/4.0.0}version').text
 
     @staticmethod
