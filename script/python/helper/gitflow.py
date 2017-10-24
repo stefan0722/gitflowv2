@@ -46,23 +46,28 @@ class GitFunctions:
         return complete_branch_name
 
     def increase_branch_version(self, is_snapshot=True):
-        version = input("Please enter the new version: ")
-        if is_snapshot:
-            version = version + "-SNAPSHOT"
-        success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
+        increase = input("Should the version be increased? [Y/N]: ")
+        if increase is "Y":
+            version = input("Please enter the new version: ")
+            if is_snapshot:
+                version = version + "-SNAPSHOT"
+                success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
                          "-f=" + self.PROJECT_HOME,
                          "-DnewVersion=" + version, "-DprocessAllModules=true",
                          "-DgenerateBackupPoms=false"], shell=True)
-        self.check_success(success, "Error setting next maven version to " + version)
-        return version
+                self.check_success(success, "Error setting next maven version to " + version)
+            return version
+        return None
 
     def increase_branch_version_next_snapshot(self):
-        success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
+        increase = input("Should the version be increased? [Y/N]: ")
+        if increase is "Y":
+            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
                          "-f=" + self.PROJECT_HOME,
                          "-DnextSnapshot=true",
                          "-DprocessAllModules=true",
                          "-DgenerateBackupPoms=false"], shell=True)
-        self.check_success(success, "Error setting next maven version!")
+            self.check_success(success, "Error setting next maven version!")
 
     def execute_maven_goal(self, maven_goal):
         success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
@@ -79,7 +84,7 @@ class GitFunctions:
                 self.check_success(success, "Error while committing to local repository, please check and try again")
                 return
             success = subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-m", message, self.PROJECT_HOME +
-                                       file_pattern])
+                                       "/" + file_pattern])
             self.check_success(success, "Error while committing to local repository, please check and try again")
 
     def has_files_to_commit(self):
