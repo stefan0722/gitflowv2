@@ -1,49 +1,32 @@
 #!/usr/bin/python
-import subprocess, getpass, webbrowser
+
+import webbrowser
+from helper import gitflow
+
+git_flow_func = gitflow.GitFunctions()
 
 print("\nAvailable local release branches: \n")
-subprocess.call(["git","show-branch","--list","release-*"])
+git_flow_func.show_branch_state("release")
 
-releaseVersion = input("Please enter name of release branch: release-")
-print("\n-- Step 1:     Change local repository to release-"+ releaseVersion +" branch --")
-subprocess.call(["git","checkout","release-" + releaseVersion],shell=True)
+release_version = input("Please enter name of release branch: release-")
+release_branch = "release-" + release_version
+git_flow_func.get_clean_branch_state(release_branch)
 
-notCommited = subprocess.check_output(["git","status","-s"]).decode("utf-8")
-if notCommited is not '' :
-    eingabe = input("Should the changes be commited to local repository? [Y/N]: ")
-    if eingabe is "Y" :
-        message = input("Please enter commit message: ")
-        subprocess.call(["git","commit","-a","-m",message])
+print("\n-- Step A:     Change local repository to master branch --")
+git_flow_func.checkout_branch("master")
 
-print("\n-- Step 2:     Pull current version of release-" + releaseVersion + " from GitHub --")
-upToDate = subprocess.check_output(["git","pull","origin","release-"+ releaseVersion]).decode("utf-8")
-if "Already up-to-date" not in str(upToDate) :
-    exit("Please check pulled changes and reexecute this script again")
+print("\n-- Step B:     Pull current version of master from GitHub --")
+git_flow_func.pull_branch("master")
 
-print("\n-- Step 3:     Change local repository to master branch --")
-subprocess.call(["git","checkout","master"],shell=True)
+print("\n-- Step C:     Change local repository to " + release_branch + " branch --")
+git_flow_func.checkout_branch(release_branch)
 
-print("\n-- Step 4:     Pull current version of master from GitHub --")
-upToDate = subprocess.check_output(["git","pull","origin","master"]).decode("utf-8")
-if "Already up-to-date" not in str(upToDate) :
-    exit("Please check pulled changes and reexecute this script again")
+print("\n-- Step D:     Merge changes from master to " + release_branch +" branch --")
+git_flow_func.merge_branch("master")
 
-print("\n-- Step 5:     Change local repository to release-"+ releaseVersion +" branch --")
-subprocess.call(["git","checkout","release-" + releaseVersion],shell=True)
+print("\n-- Step E:     Pushing changes of " + release_branch + " to GitHub --")
+git_flow_func.push_branch(release_branch)
 
-print("\n-- Step 6:     Merge changes from master to release-"+ releaseVersion +" branch --")
-mergeResult = subprocess.call(["git","merge","master"])
-if mergeResult is 1 :
-    exit("Please resolve conflict before continue")
-
-print("-- Step 7:     Pushing changes of release-" + releaseVersion + " to GitHub --")
-eingabe1 = input("Should all commits be pushed to GitHub? [Y/N]: ")
-if eingabe1 is "Y" :
-    remoteUrl = subprocess.check_output(["git","config","--get","remote.origin.url"]).decode("utf-8").replace("\n","")
-    username = subprocess.check_output(["git","config","--get","user.name"]).decode("utf-8").replace("\n","")
-    password = getpass.getpass("Please enter password for " + remoteUrl + ": ")
-    remoteUrl = remoteUrl.replace("https://github.com/","https://" + username + ":" + password + "@github.com/")
-    subprocess.call(["git","push",remoteUrl,"release-" + releaseVersion])
-
-    print("Please Open Pull Request")
-    webbrowser.open_new(remoteUrl + "/compare/master...release-" + releaseVersion+ "?expand=1")
+print("\n-- Step D:     Open WebBrowser for pull request --")
+webbrowser.open_new(git_flow_func.get_remote_url().replace(".git","") + "/compare/master..."
+                    + release_branch + "?expand=1")

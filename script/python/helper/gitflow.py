@@ -51,11 +51,11 @@ class GitFunctions:
             version = input("Please enter the new version: ")
             if is_snapshot:
                 version = version + "-SNAPSHOT"
-                success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
+            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
                          "-f=" + self.PROJECT_HOME,
                          "-DnewVersion=" + version, "-DprocessAllModules=true",
                          "-DgenerateBackupPoms=false"], shell=True)
-                self.check_success(success, "Error setting next maven version to " + version)
+            self.check_success(success, "Error setting next maven version to " + version)
             return version
         return None
 
@@ -156,6 +156,11 @@ class GitFunctions:
                 branch_name = name.replace("* ","")
                 return branch_name
         return branch_name
+
+    def create_release_tag(self, release_version):
+        success = subprocess.call(["git","tag","-a","v" + release_version,
+                                   "-m","Creating Tag for Release v" + release_version])
+        self.check_success(success,"Error creating a tag")
 
     def get_clean_branch_state(self, branch):
         print("-- Step 1:     Change local repository to " + branch + " --")
