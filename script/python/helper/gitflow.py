@@ -20,6 +20,8 @@ class GitFunctions:
     def load_environment_var(self):
         with open("environment.txt", "r") as f:
             for line in f.read().splitlines():
+                if line.startswith("#"):
+                    continue
                 elements = line.split('=')
                 key = elements[0]
                 value = elements[1]
@@ -66,14 +68,9 @@ class GitFunctions:
                                    "-DgenerateBackupPoms=false"], shell=True)
         self.check_success(success, "Error setting next maven version to " + version)
         if self.VERSION_PROPERTY is not None:
-            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:update-property",
-                                       "-f=" + self.PROJECT_HOME,
-                                       "-DnewVersion=" + version,
-                                       "-DallowSnapshots=true",
-                                       "-Dproperty=" + self.VERSION_PROPERTY,
-                                       "-DgenerateBackupPoms=false"], shell=True)
-            self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY + " to " +
-                               version)
+            tree = ET.parse(self.PROJECT_HOME + "/pom.xml")
+            tree.find(self.VERSION_PROPERTY).text = version
+            tree.write(self.PROJECT_HOME + "/pom.xml")
         return version
 
     def increase_branch_version_next_snapshot(self):
@@ -87,13 +84,9 @@ class GitFunctions:
             self.check_success(success, "Error setting next maven version!")
             if self.VERSION_PROPERTY is not None:
                 project_version = self.get_project_version()
-                success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:update-property",
-                                           "-f=" + self.PROJECT_HOME,
-                                           "-DnewVersion=" + project_version,
-                                           "-DallowSnapshots=true",
-                                           "-Dproperty=" + self.VERSION_PROPERTY,
-                                           "-DgenerateBackupPoms=false"], shell=True)
-                self.check_success(success, "Error setting next maven version in " + self.VERSION_PROPERTY)
+                tree = ET.parse(self.PROJECT_HOME + "/pom.xml")
+                tree.find(self.VERSION_PROPERTY).text = project_version
+                tree.write(self.PROJECT_HOME + "/pom.xml")
 
     def execute_maven_goal(self, maven_goal):
         success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
