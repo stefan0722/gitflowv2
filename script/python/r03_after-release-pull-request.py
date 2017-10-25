@@ -53,8 +53,8 @@ print("\n-- Step 13:     Change local repository to v"+ branch_suffix +" tag --"
 git_flow_func.checkout_branch("v" + branch_suffix)
 
 print("\n-- Step 14:     Call Maven deploy for deploying the tagged result to artifactory --")
-goal = input("Please enter maven goal to be executed [install|deploy]?")
-git_flow_func.execute_maven_goal(goal)
+# goal = input("Please enter maven goal to be executed [install|deploy]?")
+git_flow_func.execute_maven_goal("deploy")
 
 print("\n-- Step 15:     get back to develop --")
 git_flow_func.checkout_branch("develop")

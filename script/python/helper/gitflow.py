@@ -3,7 +3,7 @@
 import subprocess
 import getpass
 import os
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as et
 
 
 class GitFunctions:
@@ -12,6 +12,9 @@ class GitFunctions:
     M2_HOME = os.environ.get("M2_HOME")
     GIT_PASSWORD = None
     VERSION_PROPERTY = None
+    REPOSITORY_ID = None
+    RELEASE_REPOSITORY_URL = None
+    SNAPSHOT_REPOSITORY_URL = None
 
     def __init__(self):
         self.load_environment_var()
@@ -33,6 +36,12 @@ class GitFunctions:
                     self.GIT_USER_NAME = value
                 if "VERSION_PROPERTY" in key:
                     self.VERSION_PROPERTY = value
+                if "REPOSITORY_ID" in key:
+                    self.REPOSITORY_ID = value
+                if "RELEASE_REPOSITORY_URL" in key:
+                    self.RELEASE_REPOSITORY_URL = value
+                if "SNAPSHOT_REPOSITORY_URL" in key:
+                    self.SNAPSHOT_REPOSITORY_URL = value
 
     def checkout_branch(self, branch):
         text = subprocess.check_output(["git", "-C", self.PROJECT_HOME, "checkout", branch]).decode("utf-8")
@@ -68,9 +77,7 @@ class GitFunctions:
                                    "-DgenerateBackupPoms=false"], shell=True)
         self.check_success(success, "Error setting next maven version to " + version)
         if self.VERSION_PROPERTY is not None:
-            tree = ET.parse(self.PROJECT_HOME + "/pom.xml")
-            tree.find("project/properties/" + self.VERSION_PROPERTY).text = version
-            tree.write(self.PROJECT_HOME + "/pom.xml")
+            self.replace_property_in_pom(self.VERSION_PROPERTY, version)
         return version
 
     def increase_branch_version_next_snapshot(self):
@@ -84,14 +91,33 @@ class GitFunctions:
             self.check_success(success, "Error setting next maven version!")
             if self.VERSION_PROPERTY is not None:
                 project_version = self.get_project_version()
-                tree = ET.parse(self.PROJECT_HOME + "/pom.xml")
-                tree.find("project/properties/" + self.VERSION_PROPERTY).text = project_version
-                tree.write(self.PROJECT_HOME + "/pom.xml")
+                self.replace_property_in_pom(self.VERSION_PROPERTY, project_version)
 
     def execute_maven_goal(self, maven_goal):
-        success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
-                                   "-f=" + self.PROJECT_HOME], shell=True)
-        self.check_success(success, "Error executing " + maven_goal + "!")
+        if maven_goal is "deploy":
+            self.maven_deploy()
+        else:
+            success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
+                                       "-f=" + self.PROJECT_HOME], shell=True)
+            self.check_success(success, "Error executing " + maven_goal + "!")
+
+    def maven_deploy(self):
+        if self.REPOSITORY_ID is None:
+            self.REPOSITORY_ID = input("Please enter repository ID (e.g. Artifactory Server): ")
+        if self.RELEASE_REPOSITORY_URL is None:
+            self.RELEASE_REPOSITORY_URL = input("Please enter repository server url (e.g. "
+                                                "http://localhost/artifactory/libs-release-local): ")
+        if self.SNAPSHOT_REPOSITORY_URL is None:
+            self.RELEASE_REPOSITORY_URL = input("Please enter snapshot repository server url (e.g. "
+                                                "http://localhost/artifactory/libs-snapshot-local): ")
+        success = subprocess.call([self.M2_HOME + "/bin/mvn", "deploy",
+                                   "-f=" + self.PROJECT_HOME,
+                                   "-DaltDeploymentRepository=" + self.REPOSITORY_ID + "::default::"
+                                   + self.RELEASE_REPOSITORY_URL,
+                                   "-DaltSnapshotDeploymentRepository=" + self.REPOSITORY_ID + "::default::"
+                                   + self.SNAPSHOT_REPOSITORY_URL],
+                                  shell=True)
+        self.check_success(success, "Error executing deploy !")
 
     def commit_changes(self, message=None, file_pattern=None):
         entry = input("Should the changes be committed to local repository? [Y/N]: ")
@@ -206,8 +232,17 @@ class GitFunctions:
             self.push_branch(branch)
 
     def get_project_version(self):
-        return ET.parse(open(self.PROJECT_HOME + "/pom.xml")).getroot() \
-            .find('{http://maven.apache.org/POM/4.0.0}version').text
+        return et.parse(self.PROJECT_HOME + "/pom.xml").find('{http://maven.apache.org/POM/4.0.0}version').text
+
+    def replace_property_in_pom(self, tag_name, new_value):
+        tree = et.parse(self.PROJECT_HOME + "/pom.xml")
+        tag = tree.find(".//{http://maven.apache.org/POM/4.0.0}" + tag_name)
+        if tag is None:
+            exit("No Tag found in POM : " + tag_name)
+        tag.text = new_value
+        tree.write(self.PROJECT_HOME + "/pom.xml",
+                   default_namespace='http://maven.apache.org/POM/4.0.0')
+        print("\n Tag " + tag_name + " set to " + new_value)
 
     @staticmethod
     def check_success(exit_code, error_msg):
