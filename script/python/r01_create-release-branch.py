@@ -8,7 +8,7 @@ git_flow_func = gitflow.GitFunctions()
 
 git_flow_func.get_clean_branch_state("develop")
 
-print("\n-- Current version = " + git_flow_func.get_project_version())
+print("\n-- Current version: " + git_flow_func.get_project_version())
 print("\n-- Step 5:     Create new release branch locally")
 release_branch = git_flow_func.checkout_new_branch("release", "develop")
 

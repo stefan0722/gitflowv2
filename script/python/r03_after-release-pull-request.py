@@ -36,6 +36,7 @@ git_flow_func.get_clean_branch_state("develop")
 print("\n-- Step 8:       Merge " + branch_name + "to develop")
 git_flow_func.merge_branch_no_ff(branch_name)
 
+print("\n-- Current Version: " + git_flow_func.get_project_version())
 print("\n-- Step 9:     Increasing version of develop to next version")
 git_flow_func.increase_branch_version(True)
 
@@ -52,8 +53,8 @@ print("\n-- Step 13:     Change local repository to v"+ branch_suffix +" tag --"
 git_flow_func.checkout_branch("v" + branch_suffix)
 
 print("\n-- Step 14:     Call Maven deploy for deploying the tagged result to artifactory --")
-goal = input("Please enter maven goal to be executed [install|deploy]?")
-git_flow_func.execute_maven_goal(goal)
+# goal = input("Please enter maven goal to be executed [install|deploy]?")
+git_flow_func.execute_maven_goal("deploy")
 
 print("\n-- Step 15:     get back to develop --")
 git_flow_func.checkout_branch("develop")

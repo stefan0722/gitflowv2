@@ -1,2 +1,8 @@
+# Test file for github
+# ROJECT_HOME=D:\projects\graphium\github\graphium
 PROJECT_HOME=D:\projects\Test\gitflowv2
 GIT_USER_NAME=stefan0722
+VERSION_PROPERTY=graphium.version
+REPOSITORY_ID=Artifactory Server
+RELEASE_REPOSITORY_URL=http://localhost/artifactory/libs-release-local
+SNAPSHOT_REPOSITORY_URL=http://localhost/artifactory/libs-snapshot-local
