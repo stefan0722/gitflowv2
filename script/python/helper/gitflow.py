@@ -69,7 +69,7 @@ class GitFunctions:
         self.check_success(success, "Error setting next maven version to " + version)
         if self.VERSION_PROPERTY is not None:
             tree = ET.parse(self.PROJECT_HOME + "/pom.xml")
-            tree.find(self.VERSION_PROPERTY).text = version
+            tree.find("project/properties/" + self.VERSION_PROPERTY).text = version
             tree.write(self.PROJECT_HOME + "/pom.xml")
         return version
 
@@ -85,7 +85,7 @@ class GitFunctions:
             if self.VERSION_PROPERTY is not None:
                 project_version = self.get_project_version()
                 tree = ET.parse(self.PROJECT_HOME + "/pom.xml")
-                tree.find(self.VERSION_PROPERTY).text = project_version
+                tree.find("project/properties/" + self.VERSION_PROPERTY).text = project_version
                 tree.write(self.PROJECT_HOME + "/pom.xml")
 
     def execute_maven_goal(self, maven_goal):
