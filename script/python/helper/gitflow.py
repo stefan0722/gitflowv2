@@ -102,20 +102,26 @@ class GitFunctions:
             self.check_success(success, "Error executing " + maven_goal + "!")
 
     def maven_deploy(self):
+        project_version = self.get_project_version()
+        if "SNAPSHOT" in str(project_version):
+            if self.SNAPSHOT_REPOSITORY_URL is None:
+                repository_url = input("Please enter snapshot repository server url (e.g. "
+                                       "http://localhost/artifactory/libs-snapshot-local): ")
+            else:
+                repository_url = self.SNAPSHOT_REPOSITORY_URL
+        else:
+            if self.RELEASE_REPOSITORY_URL is None:
+                repository_url = input("Please enter repository server url (e.g. "
+                                       "http://localhost/artifactory/libs-release-local): ")
+            else:
+                repository_url = self.RELEASE_REPOSITORY_URL
         if self.REPOSITORY_ID is None:
             self.REPOSITORY_ID = input("Please enter repository ID (e.g. Artifactory Server): ")
-        if self.RELEASE_REPOSITORY_URL is None:
-            self.RELEASE_REPOSITORY_URL = input("Please enter repository server url (e.g. "
-                                                "http://localhost/artifactory/libs-release-local): ")
-        if self.SNAPSHOT_REPOSITORY_URL is None:
-            self.RELEASE_REPOSITORY_URL = input("Please enter snapshot repository server url (e.g. "
-                                                "http://localhost/artifactory/libs-snapshot-local): ")
+
         success = subprocess.call([self.M2_HOME + "/bin/mvn", "deploy",
                                    "-f=" + self.PROJECT_HOME,
                                    "-DaltDeploymentRepository=" + self.REPOSITORY_ID + "::default::"
-                                   + self.RELEASE_REPOSITORY_URL,
-                                   "-DaltSnapshotDeploymentRepository=" + self.REPOSITORY_ID + "::default::"
-                                   + self.SNAPSHOT_REPOSITORY_URL],
+                                   + repository_url],
                                   shell=True)
         self.check_success(success, "Error executing deploy !")
 
