@@ -213,9 +213,8 @@ class GitFunctions:
         return branch_name
 
     def create_release_tag(self, release_version):
-        success = subprocess.call(["git", "-C", self.PROJECT_HOME, "tag", "-a", "v" + release_version,
-                                   "-m", "Creating Tag for Release v" + release_version])
-        self.check_success(success, "Error creating a tag")
+        subprocess.call(["git", "-C", self.PROJECT_HOME, "tag", "-a", "v" + release_version,
+                         "-m", "Creating Tag for Release v" + release_version])
 
     def reset_commits(self, number_of_commits=1):
         success = subprocess.call(["git", "-C", self.PROJECT_HOME, "reset", "--soft", "HEAD~" + str(number_of_commits)])
