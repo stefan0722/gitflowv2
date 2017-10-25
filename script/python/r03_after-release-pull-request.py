@@ -38,7 +38,7 @@ git_flow_func.merge_branch_no_ff(branch_name)
 
 print("\n-- Current Version: " + git_flow_func.get_project_version())
 print("\n-- Step 9:     Increasing version of develop to next version")
-git_flow_func.increase_branch_version(True)
+git_flow_func.increase_branch_version_next_snapshot()
 
 print("\n-- Step 10:       Commiting update POM Files to develop branch")
 git_flow_func.commit_changes("Changed develop version to SNAPSHOT-VERSION","**pom.xml")
