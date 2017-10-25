@@ -63,7 +63,7 @@ class GitFunctions:
     def increase_branch_version(self, is_snapshot=True, version=None):
         if version is None:
             increase = input("Should the version be increased? [Y/N]: ")
-            if increase is "Y":
+            if increase.lower() == "Y".lower():
                 return self.__call_increase_version__(version, is_snapshot)
         else:
             return self.__call_increase_version__(version, is_snapshot)
@@ -82,7 +82,7 @@ class GitFunctions:
 
     def increase_branch_version_next_snapshot(self):
         increase = input("Should the version be increased? [Y/N]: ")
-        if increase is "Y":
+        if increase.lower() == "Y".lower():
             success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
                                        "-f=" + self.PROJECT_HOME,
                                        "-DnextSnapshot=true",
@@ -92,6 +92,7 @@ class GitFunctions:
             if self.VERSION_PROPERTY is not None:
                 project_version = self.get_project_version()
                 self.replace_property_in_pom(self.VERSION_PROPERTY, project_version)
+        return increase.lower() == "Y".lower()
 
     def execute_maven_goal(self, maven_goal):
         if maven_goal is "deploy":
@@ -127,7 +128,7 @@ class GitFunctions:
 
     def commit_changes(self, message=None, file_pattern=None):
         entry = input("Should the changes be committed to local repository? [Y/N]: ")
-        if entry is "Y":
+        if entry.lower() == "Y".lower():
             if message is None:
                 message = input("Please enter commit message: ")
             if file_pattern is None:
@@ -137,6 +138,7 @@ class GitFunctions:
             success = subprocess.call(["git", "-C", self.PROJECT_HOME, "commit", "-m", message, self.PROJECT_HOME +
                                        "/" + file_pattern])
             self.check_success(success, "Error while committing to local repository, please check and try again")
+        return entry.lower() == "Y".lower()
 
     def has_files_to_commit(self):
         not_committed = subprocess.check_output(
@@ -165,7 +167,7 @@ class GitFunctions:
 
     def push_branch(self, branch):
         entry = input("Should all commits of " + branch + " be pushed to GitHub? [Y/N]: ")
-        if entry is "Y":
+        if entry.lower() == "Y".lower():
             remote_url = GitFunctions.get_remote_url(self)
             username = GitFunctions.get_username(self)
             if self.GIT_PASSWORD is None:
@@ -179,7 +181,7 @@ class GitFunctions:
                 self.GIT_PASSWORD = None
                 exit("Error while pushing to GitHub. Please check username in Git config.name and password")
             print("Pushing successful")
-            return
+            return True
         exit("Please Push to branch in oder to continue!")
 
     def get_project_home(self):
