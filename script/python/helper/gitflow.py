@@ -151,7 +151,7 @@ class GitFunctions:
     def pull_branch(self, branch):
         text = subprocess.check_output(["git", "-C", self.PROJECT_HOME, "pull", "origin", branch]).decode("utf-8")
         print(text + "\n")
-        if "Already up-to-date" in text:
+        if "Already up-to-date" in text or "Already up to date" in text:
             return True
         return False
 
