@@ -1,8 +1,13 @@
 # Test file for github
-# ROJECT_HOME=D:\projects\graphium\github\graphium
-PROJECT_HOME=D:\projects\Test\gitflowv2
-GIT_USER_NAME=stefan0722
-VERSION_PROPERTY=graphium.version
-REPOSITORY_ID=Artifactory Server
-RELEASE_REPOSITORY_URL=http://localhost/artifactory/libs-release-local
-SNAPSHOT_REPOSITORY_URL=http://localhost/artifactory/libs-snapshot-local
+GIT_USER_NAME=micwimmer
+REPOSITORY_ID=SRFG-Nexus
+RELEASE_REPOSITORY_URL=https://nexus.salzburgresearch.at/repository/mowi-maven-releases
+SNAPSHOT_REPOSITORY_URL=https://nexus.salzburgresearch.at/repository/mowi-maven-snapshots
+#
+# Graphium
+#PROJECT_HOME=C:\development\repository\git\graphium
+#VERSION_PROPERTY=graphium.version
+#
+# Graphium-Neo4j
+PROJECT_HOME=C:\development\repository\git\graphium-neo4j
+VERSION_PROPERTY=graphium-neo4j.version

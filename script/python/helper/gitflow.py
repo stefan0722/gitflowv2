@@ -182,7 +182,7 @@ class GitFunctions:
                 exit("Error while pushing to GitHub. Please check username in Git config.name and password")
             print("Pushing successful")
             return True
-        exit("Please Push to branch in oder to continue!")
+        exit("Please Push to branch in order to continue!")
 
     def get_project_home(self):
         if self.PROJECT_HOME is None:
