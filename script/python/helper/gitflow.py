@@ -84,7 +84,7 @@ class GitFunctions:
         increase = input("Should the version be increased? [Y/N]: ")
         if increase.lower() == "Y".lower():
             success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
-                                       "-f=" + self.PROJECT_HOME,
+                                       "-X -f=" + self.PROJECT_HOME,
                                        "-DnextSnapshot=true",
                                        "-DprocessAllModules=true",
                                        "-DgenerateBackupPoms=false"], shell=True)
