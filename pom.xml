@@ -35,8 +35,8 @@
   </dependencies>
 
   <scm>
-    <connection>scm:git:https://github.com/stefan0722/gitflowv2.git</connection>
-    <url>scm:git:https://github.com/stefan0722/gitflowv2.git</url>
-    <developerConnection>scm:git:https://github.com/stefan0722/gitflowv2.git</developerConnection>
+    <connection>scm:git:https://github.com/emplexed/gitflowv2.git</connection>
+    <url>scm:git:https://github.com/emplexed/gitflowv2.git</url>
+    <developerConnection>scm:git:https://github.com/emplexed/gitflowv2.git</developerConnection>
   </scm>
 </project>
