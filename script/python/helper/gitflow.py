@@ -3,6 +3,7 @@
 import subprocess
 import getpass
 import os
+import platform
 import xml.etree.ElementTree as et
 
 
@@ -68,23 +69,41 @@ class GitFunctions:
         else:
             return self.__call_increase_version__(version, is_snapshot)
 
+    def increase_feature_branch_version(self, is_snapshot=True):
+        version = input("New version of feature branch: ")
+        if version is None:
+            increase = input("Should the version be increased? [Y/N]: ")
+            if increase.lower() == "Y".lower():
+                return self.__call_increase_version__(version, is_snapshot)
+        else:
+            return self.__call_increase_version__(version, is_snapshot)
+
     def __call_increase_version__(self, version, is_snapshot):
         if is_snapshot:
             version = version + "-SNAPSHOT"
-        mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn versions:set -f=", self.PROJECT_HOME,
+
+        mvn_path = self.norm_path(self.M2_HOME + "/bin/mvn")
+        mvn_cmd = ''.join([mvn_path + " versions:set -f=", self.PROJECT_HOME,
         	" -DnewVersion=", version, " -DprocessAllModules=true -DgenerateBackupPoms=false" ])
-        
         print("executing maven command: " + mvn_cmd + "\n")
         success = subprocess.call(mvn_cmd, shell=True)
+        
         self.check_success(success, "Error setting next maven version to " + version)
         if self.VERSION_PROPERTY is not None:
             self.replace_property_in_pom(self.VERSION_PROPERTY, version)
         return version
+        
+    def norm_path(self, path):
+        normed_path = os.path.normpath(path)
+        if platform.system() == "Windows":
+            normed_path = "\"" + normed_path + "\""
+        return normed_path
 
     def increase_branch_version_next_snapshot(self):
         increase = input("Should the version be increased? [Y/N]: ")
         if increase.lower() == "Y".lower():
-            mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn versions:set -f=", self.PROJECT_HOME,
+            mvn_path = self.norm_path(self.M2_HOME + "/bin/mvn")
+            mvn_cmd = ''.join([mvn_path + " versions:set -f=", self.PROJECT_HOME,
                    " -DnextSnapshot=true -DprocessAllModules=true -DgenerateBackupPoms=false" ])
             print("executing maven command: " + mvn_cmd + "\n")
             success = subprocess.call(mvn_cmd, shell=True)
@@ -98,7 +117,8 @@ class GitFunctions:
         if maven_goal is "deploy":
             self.maven_deploy()
         else:
-            mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn ", maven_goal, " -f=", self.PROJECT_HOME])
+            mvn_path = self.norm_path(self.M2_HOME + "/bin/mvn")
+            mvn_cmd = ''.join([mvn_path, maven_goal, " -f=", self.PROJECT_HOME])
             print("executing maven command: " + mvn_cmd + "\n")
             success = subprocess.call(mvn_cmd, shell=True)
             self.check_success(success, "Error executing " + maven_goal + "!")
@@ -119,7 +139,8 @@ class GitFunctions:
                 repository_url = self.RELEASE_REPOSITORY_URL
         if self.REPOSITORY_ID is None:
             self.REPOSITORY_ID = input("Please enter repository ID (e.g. Artifactory Server): ")
-        mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn deploy -f=", self.PROJECT_HOME,
+        mvn_path = self.norm_path(self.M2_HOME + "/bin/mvn")
+        mvn_cmd = ''.join([mvn_path + " deploy -f=", self.PROJECT_HOME,
                  " -DaltDeploymentRepository=", self.REPOSITORY_ID, "::default::", repository_url])
         print("executing maven command: " + mvn_cmd + "\n")
         success = subprocess.call(mvn_cmd, shell=True)
