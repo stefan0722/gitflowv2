@@ -71,10 +71,11 @@ class GitFunctions:
     def __call_increase_version__(self, version, is_snapshot):
         if is_snapshot:
             version = version + "-SNAPSHOT"
-        success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
-                                   "-f=" + self.PROJECT_HOME,
-                                   "-DnewVersion=" + version, "-DprocessAllModules=true",
-                                   "-DgenerateBackupPoms=false"], shell=True)
+        mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn versions:set -f=", self.PROJECT_HOME,
+        	" -DnewVersion=", version, " -DprocessAllModules=true -DgenerateBackupPoms=false" ])
+        
+        print("executing maven command: " + mvn_cmd + "\n")
+        success = subprocess.call(mvn_cmd, shell=True)
         self.check_success(success, "Error setting next maven version to " + version)
         if self.VERSION_PROPERTY is not None:
             self.replace_property_in_pom(self.VERSION_PROPERTY, version)
@@ -83,11 +84,10 @@ class GitFunctions:
     def increase_branch_version_next_snapshot(self):
         increase = input("Should the version be increased? [Y/N]: ")
         if increase.lower() == "Y".lower():
-            success = subprocess.call([self.M2_HOME + "/bin/mvn", "versions:set",
-                                       "-X -f=" + self.PROJECT_HOME,
-                                       "-DnextSnapshot=true",
-                                       "-DprocessAllModules=true",
-                                       "-DgenerateBackupPoms=false"], shell=True)
+            mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn versions:set -f=", self.PROJECT_HOME,
+                   " -DnextSnapshot=true -DprocessAllModules=true -DgenerateBackupPoms=false" ])
+            print("executing maven command: " + mvn_cmd + "\n")
+            success = subprocess.call(mvn_cmd, shell=True)
             self.check_success(success, "Error setting next maven version!")
             if self.VERSION_PROPERTY is not None:
                 project_version = self.get_project_version()
@@ -98,8 +98,9 @@ class GitFunctions:
         if maven_goal is "deploy":
             self.maven_deploy()
         else:
-            success = subprocess.call([self.M2_HOME + "/bin/mvn", maven_goal,
-                                       "-f=" + self.PROJECT_HOME], shell=True)
+            mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn ", maven_goal, " -f=", self.PROJECT_HOME])
+            print("executing maven command: " + mvn_cmd + "\n")
+            success = subprocess.call(mvn_cmd, shell=True)
             self.check_success(success, "Error executing " + maven_goal + "!")
 
     def maven_deploy(self):
@@ -118,12 +119,10 @@ class GitFunctions:
                 repository_url = self.RELEASE_REPOSITORY_URL
         if self.REPOSITORY_ID is None:
             self.REPOSITORY_ID = input("Please enter repository ID (e.g. Artifactory Server): ")
-
-        success = subprocess.call([self.M2_HOME + "/bin/mvn", "deploy",
-                                   "-f=" + self.PROJECT_HOME,
-                                   "-DaltDeploymentRepository=" + self.REPOSITORY_ID + "::default::"
-                                   + repository_url],
-                                  shell=True)
+        mvn_cmd = ''.join([self.M2_HOME, "/bin/mvn deploy -f=", self.PROJECT_HOME,
+                 " -DaltDeploymentRepository=", self.REPOSITORY_ID, "::default::", repository_url])
+        print("executing maven command: " + mvn_cmd + "\n")
+        success = subprocess.call(mvn_cmd, shell=True)
         self.check_success(success, "Error executing deploy !")
 
     def commit_changes(self, message=None, file_pattern=None):
