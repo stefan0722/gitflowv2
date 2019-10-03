@@ -1,13 +1,7 @@
 # Test file for github
-GIT_USER_NAME=micwimmer
-REPOSITORY_ID=SRFG-Nexus
-RELEASE_REPOSITORY_URL=https://nexus.salzburgresearch.at/repository/mowi-maven-releases
-SNAPSHOT_REPOSITORY_URL=https://nexus.salzburgresearch.at/repository/mowi-maven-snapshots
-#
-# Graphium
-#PROJECT_HOME=C:\development\repository\git\graphium
-#VERSION_PROPERTY=graphium.version
-#
-# Graphium-Neo4j
-PROJECT_HOME=C:\development\repository\git\graphium-neo4j
-VERSION_PROPERTY=graphium-neo4j.version
+GIT_USER_NAME=[YOUR_USER_NAME]
+REPOSITORY_ID=[YOUR_REPO_ID]
+RELEASE_REPOSITORY_URL=[YOUR_RELEASE_REPOSITORY_URL]
+SNAPSHOT_REPOSITORY_URL=[YOUR_SNAPSHOT_REPOSITORY_URL]
+PROJECT_HOME=[YOUR_PROJECT_HOME]
+VERSION_PROPERTY=[YOUR_VERSION_PROPERTY]
