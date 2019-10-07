@@ -118,7 +118,7 @@ class GitFunctions:
             self.maven_deploy()
         else:
             mvn_path = self.norm_path(self.M2_HOME + "/bin/mvn")
-            mvn_cmd = ''.join([mvn_path, maven_goal, " -f=", self.PROJECT_HOME])
+            mvn_cmd = ''.join([mvn_path, " ", maven_goal, " -f=", self.PROJECT_HOME])
             print("executing maven command: " + mvn_cmd + "\n")
             success = subprocess.call(mvn_cmd, shell=True)
             self.check_success(success, "Error executing " + maven_goal + "!")
