@@ -12,7 +12,7 @@ branchName = git_flow_func.checkout_new_branch("feature", "develop")
 
 print("\n-- Current version: " + git_flow_func.get_project_version())
 print("\n\n-- Step 5:     Increasing version of " + branchName)
-branchVersion = git_flow_func.increase_branch_version()
+branchVersion = git_flow_func.increase_feature_branch_version()
 
 print("\n\n-- Step 6:     Committing update POM Files to " + branchName)
 git_flow_func.commit_changes("Changed " + branchName + " version to " + branchVersion, "**pom.xml")

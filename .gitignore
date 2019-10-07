@@ -7,3 +7,4 @@ target/
 environment.*
 script/python/__pycache__/
 script/python/helper/__pycache__/
+*.pyc

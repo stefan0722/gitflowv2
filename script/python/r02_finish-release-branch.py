@@ -27,6 +27,6 @@ git_flow_func.merge_branch("master")
 print("\n-- Step E:     Pushing changes of " + release_branch + " to GitHub --")
 git_flow_func.push_branch(release_branch)
 
-print("\n-- Step D:     Open WebBrowser for pull request --")
+print("\n-- Step F:     Open WebBrowser for pull request --")
 webbrowser.open_new(git_flow_func.get_remote_url().replace(".git","") + "/compare/master..."
                     + release_branch + "?expand=1")
